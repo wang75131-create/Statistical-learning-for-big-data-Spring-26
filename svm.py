@@ -8,13 +8,14 @@ from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 
-
 BASE_DIR = Path("data/mnist_large")
 PATHIM = BASE_DIR / "images.csv"
 PATHLB = BASE_DIR / "labels.csv"
 
 
-def run_robust_svm_experiment(n_runs=3):
+def run_robust_svm_experiment(n_runs=3, noise_levels=None):
+    if noise_levels is None:
+        noise_levels = [0.1, 0.5, 0.8]
     images = pd.read_csv(PATHIM, index_col=0)
     labels = pd.read_csv(PATHLB, index_col=0)
     labels = labels.rename(columns={"0": "label"})
@@ -35,38 +36,62 @@ def run_robust_svm_experiment(n_runs=3):
         'svm__kernel': ['rbf', 'linear']
     }
 
-    results = []
+    noise_std = 0.1 * 255
 
-    for i in range(n_runs):
-        current_seed = 42 + i
+    # Loop through the requested noise levels (10%, 50%, 80%)
+    for noise_ratio in noise_levels:
+        noise_pct = int(noise_ratio * 100)
+        print(f"\n{'=' * 50}")
+        print(f"Evaluating robustness with {noise_pct}% noisy features")
+        print(f"{'=' * 50}")
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, stratify=y, random_state=current_seed
-        )
+        results = []
 
-        cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=current_seed)
+        for i in range(n_runs):
+            current_seed = 42 + i
 
-        grid = GridSearchCV(
-            pipeline, param_grid, cv=cv, scoring='accuracy', n_jobs=-1
-        )
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.2, stratify=y, random_state=current_seed
+            )
 
-        print(f"running {i + 1} times (Random Seed: {current_seed})...")
-        grid.fit(X_train, y_train)
+            np.random.seed(current_seed)
+            n_features = X.shape[1]
+            n_noisy_features = int(n_features * noise_ratio)
 
-        best_model = grid.best_estimator_
-        y_pred = best_model.predict(X_test)
-        acc = accuracy_score(y_test, y_pred)
+            noisy_indices = np.random.choice(n_features, n_noisy_features, replace=False)
 
-        results.append(acc)
-        print(f" -> best parameter: {grid.best_params_}")
-        print(f" -> accuracy: {acc:.4f}\n")
+            X_train_noisy = X_train.copy().astype(float)
+            X_test_noisy = X_test.copy().astype(float)
 
-    mean_acc = np.mean(results)
-    std_acc = np.std(results)
+            X_train_noisy[:, noisy_indices] += np.random.normal(loc=0.0, scale=noise_std,
+                                                                size=(X_train.shape[0], n_noisy_features))
+            X_test_noisy[:, noisy_indices] += np.random.normal(loc=0.0, scale=noise_std,
+                                                               size=(X_test.shape[0], n_noisy_features))
 
-    print(f"mean accuracy: {mean_acc:.4f}")
-    print(f"Standard deviation: {std_acc:.4f}")
+            cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=current_seed)
+
+            grid = GridSearchCV(
+                pipeline, param_grid, cv=cv, scoring='accuracy', n_jobs=-1
+            )
+
+            print(f"Running {i + 1}/{n_runs} (Random Seed: {current_seed})...")
+            grid.fit(X_train_noisy, y_train)
+
+            best_model = grid.best_estimator_
+            y_pred = best_model.predict(X_test_noisy)
+            acc = accuracy_score(y_test, y_pred)
+
+            results.append(acc)
+            print(f" -> best parameter: {grid.best_params_}")
+            print(f" -> accuracy: {acc:.4f}\n")
+
+        mean_acc = np.mean(results)
+        std_acc = np.std(results)
+
+        print(f"--- Summary for {noise_pct}% feature noise ---")
+        print(f"Mean accuracy: {mean_acc:.4f}")
+        print(f"Standard deviation: {std_acc:.4f}")
 
 
 if __name__ == "__main__":
-    run_robust_svm_experiment(n_runs=3)
+    run_robust_svm_experiment(n_runs=3, noise_levels=[0.1, 0.5, 0.8])

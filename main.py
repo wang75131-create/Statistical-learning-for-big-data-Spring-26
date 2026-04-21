@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-BASE_DIR = Path("data/mnist_small")
+BASE_DIR = Path("data/mnist_large")
 PATHIM = BASE_DIR / "images.csv"
 PATHLB = BASE_DIR / "labels.csv"
 
@@ -96,6 +96,7 @@ def explore_and_visualize():
         "LogReg": (LogisticRegression(max_iter=500), {"C": [0.1, 1.0]}),
         "RandomForest": (RandomForestClassifier(random_state=42), {"n_estimators": [50]}),
         "SVM": (SVC(random_state=42), {"C": [1, 10], "kernel": ["rbf"]})
+        #svm
     }
 
     results = {}
