@@ -12,12 +12,10 @@ PATHIM = "data/mnist_large/images.csv"
 PATHLB = "data/mnist_large/labels.csv"
 
 
-# Load data in the same style as the notebook.
 images = pd.read_csv(PATHIM, sep=",", index_col=0)
 labels = pd.read_csv(PATHLB, sep=",", index_col=0)
 labels = labels.rename(columns={"0": "label"})
 
-# Split in the same way as the shared group setup.
 x_train, x_test, y_train, y_test = train_test_split(
     images,
     labels,
@@ -37,7 +35,7 @@ print(f"Train shape: {X_train.shape}")
 print(f"Test shape: {X_test.shape}")
 
 
-# Use a simple pipeline: scale, reduce dimension, train classifier.
+# Pipeline!
 pipeline = Pipeline([
     ("scaler", StandardScaler()),
     ("pca", PCA(random_state=42)),
@@ -45,11 +43,25 @@ pipeline = Pipeline([
 ])
 
 
-# Tune only a small set of C values.
+# Tuning parameters
 param_grid = {
-    "pca__n_components": [25, 50, 75, 100, 150],
-    "model__C": [0.01, 1.0, 100.0],
+    "pca__n_components": [0.8, 0.85, 0.9, 0.95, 0.98],
+    "model__C": [0.001, 0.01, 0.1, 1.0, 10.0],
 }
+
+# Map explained-variance ratios to concrete component counts on the
+# standardized training set so the plot can use numeric PCA dimensions.
+X_train_scaled_for_plot = StandardScaler().fit_transform(X_train)
+pca_component_map = {}
+for ratio in param_grid["pca__n_components"]:
+    pca_for_plot = PCA(n_components=ratio, random_state=42)
+    pca_for_plot.fit(X_train_scaled_for_plot)
+    pca_component_map[ratio] = pca_for_plot.n_components_
+
+print("Resolved PCA component counts:")
+for ratio, count in pca_component_map.items():
+    print(f"  {ratio} -> {count}")
+print()
 
 grid_search = GridSearchCV(
     pipeline,
@@ -74,7 +86,7 @@ score_matrix = cv_results.pivot(
     index="param_pca__n_components",
     columns="param_model__C",
     values="mean_test_score",
-)
+).sort_index()
 
 fig, ax = plt.subplots(figsize=(8, 5))
 im = ax.imshow(score_matrix, cmap="viridis", aspect="auto")
@@ -82,7 +94,10 @@ im = ax.imshow(score_matrix, cmap="viridis", aspect="auto")
 ax.set_xticks(np.arange(len(score_matrix.columns)))
 ax.set_xticklabels([str(value) for value in score_matrix.columns])
 ax.set_yticks(np.arange(len(score_matrix.index)))
-ax.set_yticklabels([str(value) for value in score_matrix.index])
+ax.set_yticklabels([
+    f"{float(value):.2f}(~{pca_component_map[float(value)]})"
+    for value in score_matrix.index
+])
 ax.set_xlabel("LogisticRegression C")
 ax.set_ylabel("PCA n_components")
 ax.set_title("Grid-search mean CV accuracy")
@@ -108,7 +123,7 @@ plt.tight_layout()
 plt.show()
 
 
-# Evaluate the best model on validation and test data.
+# Evaluate the best model on test set.
 best_model = grid_search.best_estimator_
 
 y_test_pred = best_model.predict(X_test)
@@ -124,7 +139,7 @@ print("Test classification report:")
 print(classification_report(y_test, y_test_pred))
 
 
-# Confusion matrix on the test set.
+# Confusion matrix on test set.
 ConfusionMatrixDisplay.from_predictions(
     y_test,
     y_test_pred,
