@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKF
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
 
 BASE_DIR = Path("data/mnist_large")
 PATHIM = BASE_DIR / "images.csv"
@@ -29,7 +30,6 @@ def run_robust_svm_experiment(n_runs=3, noise_levels=None):
         ('pca', PCA(n_components=50)),
         ('svm', SVC())
     ])
-    # can compare it with n_dim 2
 
     param_grid = {
         'svm__C': [0.1, 1, 10],
@@ -38,7 +38,11 @@ def run_robust_svm_experiment(n_runs=3, noise_levels=None):
 
     noise_std = 0.1 * 255
 
-    # Loop through the requested noise levels (10%, 50%, 80%)
+    plot_noise_pcts = []
+    plot_mean_accs = []
+    plot_std_accs = []
+
+    # Loop through the noise levels (10%, 50%, 80%)
     for noise_ratio in noise_levels:
         noise_pct = int(noise_ratio * 100)
         print(f"\n{'=' * 50}")
@@ -91,6 +95,36 @@ def run_robust_svm_experiment(n_runs=3, noise_levels=None):
         print(f"--- Summary for {noise_pct}% feature noise ---")
         print(f"Mean accuracy: {mean_acc:.4f}")
         print(f"Standard deviation: {std_acc:.4f}")
+
+        plot_noise_pcts.append(noise_pct)
+        plot_mean_accs.append(mean_acc)
+        plot_std_accs.append(std_acc)
+
+    plt.figure(figsize=(8, 6))
+
+    plt.errorbar(
+        plot_noise_pcts,
+        plot_mean_accs,
+        yerr=plot_std_accs,
+        marker='o',
+        linestyle='-',
+        color='b',
+        capsize=5,
+        linewidth=2,
+        label='SVM Accuracy'
+    )
+
+    plt.title('SVM Performance vs. Feature Noise', fontsize=14)
+    plt.xlabel('Percentage of Noisy Features (%)', fontsize=12)
+    plt.ylabel('Mean Accuracy', fontsize=12)
+
+    plt.ylim(0.9, 1.00)
+    plt.xticks(plot_noise_pcts)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend(loc='lower left')
+
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == "__main__":
