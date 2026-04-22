@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-BASE_DIR = Path("data/mnist_small")
+BASE_DIR = Path("data/mnist_large")
 PATHIM = BASE_DIR / "images.csv"
 PATHLB = BASE_DIR / "labels.csv"
 
