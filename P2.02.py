@@ -14,14 +14,15 @@ from threadpoolctl import threadpool_limits
 
 
 N_JOBS = max(1, (os.cpu_count() or 2) - 1)
+RANDOM_STATE = 42
 RESULTS_DIR = "results"
 GRID_SCORES_PATH = os.path.join(RESULTS_DIR, "P2.02_grid_scores.csv")
+SELECTED_PIXELS_PATH = os.path.join(RESULTS_DIR, "P2.02_selected_pixels.csv")
+OVERLAP_PIXELS_PATH = os.path.join(RESULTS_DIR, "P2.02_overlap_pixels.csv")
 
 
-def save_grid_scores(grid, dataset_name, classifier_name, test_accuracy, output_path=GRID_SCORES_PATH):
-    """Save one row per parameter combination from GridSearchCV."""
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-
+def grid_scores_dataframe(grid, dataset_name, classifier_name, test_accuracy):
+    """Create one row per parameter combination from GridSearchCV."""
     results = pd.DataFrame(grid.cv_results_)
     param_cols = sorted([col for col in results.columns if col.startswith("param_")])
     split_cols = sorted([col for col in results.columns if col.startswith("split") and col.endswith("_test_score")])
@@ -32,11 +33,56 @@ def save_grid_scores(grid, dataset_name, classifier_name, test_accuracy, output_
     output.insert(0, "dataset", dataset_name)
     output["is_best"] = output["rank_test_score"] == 1
     output["final_test_accuracy"] = np.where(output["is_best"], test_accuracy, np.nan)
-    output = output.sort_values(["dataset", "classifier", "rank_test_score"])
+    return output
 
-    write_header = not os.path.exists(output_path)
-    output.to_csv(output_path, mode="a", header=write_header, index=False)
-    print(f"Saved parameter-combination scores to {output_path}")
+
+def pixel_coordinates(pixel_indices, n_features):
+    side_len = int(math.sqrt(n_features))
+    if side_len * side_len != n_features:
+        return pd.DataFrame({
+            "pixel_index": pixel_indices,
+            "row": np.nan,
+            "col": np.nan,
+        })
+
+    return pd.DataFrame({
+        "pixel_index": pixel_indices,
+        "row": pixel_indices // side_len,
+        "col": pixel_indices % side_len,
+    })
+
+
+def selected_pixels_dataframe(pixel_indices, dataset_name, classifier_name, n_features):
+    pixel_indices = np.asarray(pixel_indices, dtype=int)
+    output = pixel_coordinates(pixel_indices, n_features)
+    output.insert(0, "classifier", classifier_name)
+    output.insert(0, "dataset", dataset_name)
+    output["n_selected_by_model"] = len(pixel_indices)
+    return output
+
+
+def overlap_pixels_dataframe(original_pixels_by_classifier, flipped_pixels_by_classifier, n_features):
+    rows = []
+    for classifier_name in original_pixels_by_classifier:
+        common_pixels = np.intersect1d(
+            original_pixels_by_classifier[classifier_name],
+            flipped_pixels_by_classifier[classifier_name]
+        )
+        coords = pixel_coordinates(common_pixels, n_features)
+        coords.insert(0, "classifier", classifier_name)
+        coords["n_original_selected"] = len(original_pixels_by_classifier[classifier_name])
+        coords["n_flipped_selected"] = len(flipped_pixels_by_classifier[classifier_name])
+        coords["n_overlap"] = len(common_pixels)
+        rows.append(coords)
+
+    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+
+
+def save_dataframe(output, output_path, sort_columns):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    output = output.sort_values(sort_columns) if not output.empty else output
+    output.to_csv(output_path, index=False)
+    print(f"Saved results to {output_path}")
 
 
 def make_grid_search(estimator, param_grid, cv):
@@ -51,7 +97,15 @@ def make_grid_search(estimator, param_grid, cv):
     )
 
 
-def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all"):
+def run_combined_experiments(
+    X,
+    y,
+    dataset_name="Original",
+    classifier_mode="all",
+    random_state=RANDOM_STATE,
+    grid_score_rows=None,
+    selected_pixel_rows=None,
+):
     print(f"\n{'='*50}")
     print(f"--- Running [Filter + Lasso] on {dataset_name} Dataset ---")
 
@@ -59,8 +113,19 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
     valid_modes = {"logreg", "lda", "svm", "all"}
     if classifier_mode not in valid_modes:
         raise ValueError(f"classifier_mode must be one of {sorted(valid_modes)}")
+
+    if grid_score_rows is None:
+        grid_score_rows = []
+    if selected_pixel_rows is None:
+        selected_pixel_rows = []
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.25,
+        random_state=random_state,
+        stratify=y,
+    )
     # 1. data scaling (Standardization)
     # Could refactor to do this in pipeline if desired
     scaler = StandardScaler()
@@ -68,12 +133,12 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
     X_test_scaled = scaler.transform(X_test)
     
     # 2. 5 CV for Grid Search
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
 
     # 3. pipeline
     pipeline = Pipeline([
         ('filter', SelectKBest(score_func=f_classif)),
-        ('lasso', LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=42)),
+        ('lasso', LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=random_state)),
     ])
 
     ## Update pipeline for LogReg (include scaler and add SelectFromModel / second LogReg)
@@ -81,17 +146,17 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
     log_reg_pipeline_2 = Pipeline([
         ('filter', SelectKBest(score_func=f_classif)),
         ('lasso', SelectFromModel(
-            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=42)
+            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=random_state)
         )),
         #No lambda (1/lambda = c = C = np.inf) #So no L1 Ratio
-        ('regression', LogisticRegression(solver='lbfgs', max_iter=2000, random_state=42, C=1e8))
+        ('regression', LogisticRegression(solver='lbfgs', max_iter=2000, random_state=random_state, C=1e8))
     ])
 
     ## Pipeline for LDAs
     lda_pipeline = Pipeline([
         ('filter', SelectKBest(score_func=f_classif)),
         ('lasso', SelectFromModel(
-            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=42)
+            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=2000, random_state=random_state)
         )),
         ('lda', LinearDiscriminantAnalysis(solver="svd"))
     ])
@@ -100,9 +165,9 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
     svm_pipeline = Pipeline([
         ('filter', SelectKBest(score_func=f_classif)),
         ('lasso', SelectFromModel(
-            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=10000, random_state=42)
+            LogisticRegression(l1_ratio=1.0, solver='saga', max_iter=10000, random_state=random_state)
         )),
-        ('svm', SVC(random_state=42))
+        ('svm', SVC(random_state=random_state))
     ])
 
     # 4. Grid Search
@@ -141,7 +206,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
 
     ##param_grid for SVM
     param_grid_svm = {
-        'filter__k': [600, 1500],
+        'filter__k': [200, 900],
 
         'lasso__estimator__C': [
             #0.001,
@@ -170,7 +235,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         test_accuracy = best_model.score(X_test_scaled, y_test)
         print(f"FINAL TEST ACCURACY (on 25% unseen data): {test_accuracy:.4f}")
-        save_grid_scores(grid, dataset_name, "logreg", test_accuracy)
+        grid_score_rows.append(grid_scores_dataframe(grid, dataset_name, "logreg", test_accuracy))
 
         filter_mask = best_model.named_steps['filter'].get_support()
         filter_selected_pixels_in_original = np.where(filter_mask)[0] 
@@ -180,6 +245,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         final_selected_pixels = filter_selected_pixels_in_original[lasso_mask]
         selected_pixels_by_classifier["logreg"] = final_selected_pixels
+        selected_pixel_rows.append(selected_pixels_dataframe(final_selected_pixels, dataset_name, "logreg", X.shape[1]))
         print(f"Final number of features selected: {len(final_selected_pixels)}")
         print(f"{'='*50}")
 
@@ -200,7 +266,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         test_accuracy = best_model.score(X_test_scaled, y_test)
         print(f"FINAL TEST ACCURACY (on 25% unseen data): {test_accuracy:.4f}")
-        save_grid_scores(grid, dataset_name, "lda", test_accuracy)
+        grid_score_rows.append(grid_scores_dataframe(grid, dataset_name, "lda", test_accuracy))
 
         filter_mask = best_model.named_steps['filter'].get_support()
         filter_selected_pixels_in_original = np.where(filter_mask)[0] 
@@ -210,6 +276,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         final_selected_pixels = filter_selected_pixels_in_original[lasso_mask]
         selected_pixels_by_classifier["lda"] = final_selected_pixels
+        selected_pixel_rows.append(selected_pixels_dataframe(final_selected_pixels, dataset_name, "lda", X.shape[1]))
         
         print(f"Final number of features selected: {len(final_selected_pixels)}")
         print(f"{'='*50}")
@@ -232,7 +299,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         test_accuracy = best_model.score(X_test_scaled, y_test)
         print(f"FINAL TEST ACCURACY (on 25% unseen data): {test_accuracy:.4f}")
-        save_grid_scores(grid, dataset_name, "svm", test_accuracy)
+        grid_score_rows.append(grid_scores_dataframe(grid, dataset_name, "svm", test_accuracy))
 
         filter_mask = best_model.named_steps['filter'].get_support()
         filter_selected_pixels_in_original = np.where(filter_mask)[0] 
@@ -242,6 +309,7 @@ def run_combined_experiments(X, y, dataset_name="Original", classifier_mode="all
         
         final_selected_pixels = filter_selected_pixels_in_original[lasso_mask]
         selected_pixels_by_classifier["svm"] = final_selected_pixels
+        selected_pixel_rows.append(selected_pixels_dataframe(final_selected_pixels, dataset_name, "svm", X.shape[1]))
         
         print(f"Final number of features selected: {len(final_selected_pixels)}")
         print(f"{'='*50}")
@@ -276,29 +344,41 @@ if __name__ == "__main__":
     X_flipped = X.copy()
     # Note: reshape() does NOT create a copy, they share the same memory.
     X_flipped_3d = X_flipped.reshape(n_samples, img_height, img_width)
-    np.random.seed(42) 
+    rng = np.random.default_rng(RANDOM_STATE)
     
     for cls in np.unique(y):
         cls_indices = np.where(y == cls)[0]
-        np.random.shuffle(cls_indices)
+        rng.shuffle(cls_indices)
         indices_to_flip = cls_indices[:len(cls_indices) // 2]
         # Since memory is shared, modifying X_flipped_3d automatically updates the 2D X_flipped.
         # No need to reshape it back!
         X_flipped_3d[indices_to_flip] = X_flipped_3d[indices_to_flip, ::-1, :]
 
     print(f"Using {N_JOBS} parallel worker(s) for GridSearchCV.")
-    if os.path.exists(GRID_SCORES_PATH):
-        os.remove(GRID_SCORES_PATH)
+    grid_score_rows = []
+    selected_pixel_rows = []
 
     with threadpool_limits(limits=1):
         # Part 1
         final_pixels_original = run_combined_experiments(
-            X, y, dataset_name="Original", classifier_mode=CLASSIFIER_MODE
+            X,
+            y,
+            dataset_name="Original",
+            classifier_mode=CLASSIFIER_MODE,
+            random_state=RANDOM_STATE,
+            grid_score_rows=grid_score_rows,
+            selected_pixel_rows=selected_pixel_rows,
         )
 
         # Part 2
         final_pixels_flipped = run_combined_experiments(
-            X_flipped, y, dataset_name="Half-Flipped", classifier_mode=CLASSIFIER_MODE
+            X_flipped,
+            y,
+            dataset_name="Half-Flipped",
+            classifier_mode=CLASSIFIER_MODE,
+            random_state=RANDOM_STATE,
+            grid_score_rows=grid_score_rows,
+            selected_pixel_rows=selected_pixel_rows,
         )
     
     # comparison of selected pixels
@@ -314,3 +394,11 @@ if __name__ == "__main__":
             final_pixels_flipped[classifier_name]
         )
         print(f"Overlapping selected pixels: {len(common_pixels)}")
+
+    grid_scores = pd.concat(grid_score_rows, ignore_index=True, sort=False)
+    selected_pixels = pd.concat(selected_pixel_rows, ignore_index=True, sort=False)
+    overlap_pixels = overlap_pixels_dataframe(final_pixels_original, final_pixels_flipped, n_features)
+
+    save_dataframe(grid_scores, GRID_SCORES_PATH, ["dataset", "classifier", "rank_test_score"])
+    save_dataframe(selected_pixels, SELECTED_PIXELS_PATH, ["dataset", "classifier", "pixel_index"])
+    save_dataframe(overlap_pixels, OVERLAP_PIXELS_PATH, ["classifier", "pixel_index"])
