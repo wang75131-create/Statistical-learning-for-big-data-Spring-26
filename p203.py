@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
-warnings.filterwarnings("ignore", category=ConvergenceWarning)
+# warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 
 
@@ -58,7 +58,7 @@ def exp1_filter_svm_comparison(X_train, X_test, y_train, y_test, cv):
     ])
 
     param_grid = {
-        'filter__k':[100, 200, 500, 1000],
+        'filter__k':[100, 200, 500],
         "svm__kernel": ["linear", "rbf"],
         "svm__C": [0.1, 1, 10]
     }
@@ -79,7 +79,7 @@ def exp2_wrapper_svm_comparison(X_train, X_test, y_train, y_test, cv):
 
     pipe = Pipeline([
         ("scaler", StandardScaler()),
-        ("pre_filter", SelectKBest(score_func=f_classif, k=400)),
+        ("pre_filter", SelectKBest(score_func=f_classif, k=500)),
 
         ("wrapper", RFE(estimator=SVC(kernel="linear"), step=0.1)),
 
@@ -89,7 +89,7 @@ def exp2_wrapper_svm_comparison(X_train, X_test, y_train, y_test, cv):
     param_grid = {
         "wrapper__n_features_to_select": [50, 100, 150],
 
-        "svm__kernel": ["linear", "rbf"],
+        "svm__kernel": [ "rbf"],
         "svm__C": [0.1, 1, 10]
 
     }
@@ -130,3 +130,52 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.show()
 
+# C:\Users\William\AppData\Local\Programs\Python\Python313\python.exe C:\Users\William\PycharmProjects\Statistical-learning-for-big-data-Spring-26\p203.py
+# Loaded real data. X shape: (10000, 4096), y shape: (10000,)
+#
+# ==================================================
+# Experiment 1: Filter (F-test) + Linear SVM
+# ==================================================
+# Best Parameters: {'filter__k': 300, 'svm__C': 0.1}
+# Test Accuracy: 0.7185
+#
+# ==================================================
+# Experiment 2: Wrapper (RFE) + RBF SVM
+# ==================================================
+# Best Parameters: {'svm__C': 10, 'svm__gamma': 'scale', 'wrapper__n_features_to_select': 150}
+# Test Accuracy: 0.8405
+#
+# ==================================================
+# Experiment 3: Embedded (L1-LinearSVC) + Poly SVM
+# ==================================================
+# Best Parameters: {'embedded__estimator__C': 0.05, 'svm__C': 1}
+# Test Accuracy: 0.8615
+#
+# ==================================================
+# Stability Analysis: Using L1-LinearSVC
+# ==================================================
+#
+# --- Part A: Statistical Stability (3 Random Runs) ---
+# Average Jaccard Similarity (L1-SVM): 0.3882
+#
+# --- Part B: Physical Stability (Image Flipping) ---
+# Pixels kept after flipping: 629 / 1412 (44.5%)
+#
+# 进程已结束，退出代码为 0
+
+
+
+# C:\Users\William\AppData\Local\Programs\Python\Python313\python.exe C:\Users\William\PycharmProjects\Statistical-learning-for-big-data-Spring-26\p203.py
+# Loaded real data. X shape: (10000, 4096), y shape: (10000,)
+#
+# ==================================================
+# Experiment 1: Filter (F-test) + SVM (Comparing Linear vs RBF)
+# ==================================================
+# Best Parameters: {'filter__k': 500, 'svm__C': 10, 'svm__kernel': 'rbf'}
+# Test Accuracy: 0.8612
+#
+# ==================================================
+# Experiment 2: Wrapper (RFE) + SVM (Comparing Linear vs RBF)
+# ==================================================
+# Best Parameters: {'svm__C': 10, 'svm__kernel': 'rbf', 'wrapper__n_features_to_select': 150}
+# Test Accuracy: 0.8500

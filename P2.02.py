@@ -5,7 +5,7 @@ import os
 import multiprocessing as mp
 from sklearn.model_selection import train_test_split, StratifiedKFold, GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import SelectKBest, f_classif, SelectFromModel
+from sklearn.feature_selection import SelectKBest, f_classif, SelectFromModel, RFE
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -82,7 +82,7 @@ def save_dataframe(output, output_path, sort_columns):
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     output = output.sort_values(sort_columns) if not output.empty else output
     output.to_csv(output_path, index=False)
-    print(f"Saved results to {output_path}")
+    print(f"Saved results_wrapper to {output_path}")
 
 
 def make_grid_search(estimator, param_grid, cv):
@@ -110,7 +110,7 @@ def run_combined_experiments(
     print(f"--- Running [Filter + Lasso] on {dataset_name} Dataset ---")
 
     classifier_mode = classifier_mode.lower()
-    valid_modes = {"logreg", "lda", "svm", "all"}
+    valid_modes = {"logreg", "lda", "svm", "all", "svm_wrapper"}
     if classifier_mode not in valid_modes:
         raise ValueError(f"classifier_mode must be one of {sorted(valid_modes)}")
 
@@ -170,6 +170,15 @@ def run_combined_experiments(
         ('svm', SVC(random_state=random_state))
     ])
 
+    svm_wrapper_pipeline = Pipeline([
+        ('filter', SelectKBest(score_func=f_classif)),
+        ('wrapper', RFE(
+            estimator=SVC(kernel="linear"),
+            step=0.1
+        )),
+        ('svm', SVC(random_state=random_state))
+    ])
+
     # 4. Grid Search
     param_grid = {
         'filter__k':[100, 200, 500, 1000], 
@@ -218,6 +227,15 @@ def run_combined_experiments(
 
         'svm__C': [1, 10],
         'svm__kernel': ['rbf']
+    }
+
+    param_grid_svm_wrapper = {
+        'filter__k': [500],
+
+        'wrapper__n_features_to_select': [50, 100, 150],
+
+        'svm__kernel': ['rbf'],
+        'svm__C': [0.1, 1, 10],
     }
     
     selected_pixels_by_classifier = {}
@@ -313,7 +331,44 @@ def run_combined_experiments(
         
         print(f"Final number of features selected: {len(final_selected_pixels)}")
         print(f"{'='*50}")
-    
+
+
+    if classifier_mode in ("svm_wrapper", "all"):
+        print("Running GridSearchCV for Filter + Wrapper(RFE) + SVM...")
+        grid = make_grid_search(svm_wrapper_pipeline, param_grid_svm_wrapper, cv)
+        grid.fit(X_train_scaled, y_train)
+
+        best_model = grid.best_estimator_
+        print(f"Optimal Filter 'k': {grid.best_params_['filter__k']}")
+        print(f"Optimal Wrapper n_features_to_select: {grid.best_params_['wrapper__n_features_to_select']}")
+        print(f"Optimal SVM 'C': {grid.best_params_['svm__C']}")
+        print(f"Optimal SVM kernel: {grid.best_params_['svm__kernel']}")
+        print(f"CV Accuracy (on 75% train data): {grid.best_score_:.4f}")
+
+        test_accuracy = best_model.score(X_test_scaled, y_test)
+        print(f"FINAL TEST ACCURACY (on 25% unseen data): {test_accuracy:.4f}")
+        grid_score_rows.append(grid_scores_dataframe(grid, dataset_name, "svm_wrapper", test_accuracy))
+
+        filter_mask = best_model.named_steps['filter'].get_support()
+        filter_selected_pixels_in_original = np.where(filter_mask)[0]
+
+        wrapper_mask = best_model.named_steps['wrapper'].get_support()
+
+        final_selected_pixels = filter_selected_pixels_in_original[wrapper_mask]
+        selected_pixels_by_classifier["svm_wrapper"] = final_selected_pixels
+        selected_pixel_rows.append(
+            selected_pixels_dataframe(
+                final_selected_pixels,
+                dataset_name,
+                "svm_wrapper",
+                X.shape[1]
+            )
+        )
+
+        print(f"Final number of features selected: {len(final_selected_pixels)}")
+        print(f"{'='*50}")
+
+
     return selected_pixels_by_classifier
 
 # ==========================================
@@ -321,7 +376,7 @@ def run_combined_experiments(
 # ==========================================
 if __name__ == "__main__":
     mp.freeze_support()
-    CLASSIFIER_MODE = "svm"  #################### Choose from: "logreg", "lda", "svm", "all" ########################################
+    CLASSIFIER_MODE = "svm_wrapper"  #################### Choose from: "logreg", "lda", "svm", "all" ########################################
 
     print("Loading data...")
     PATHIM = "data//cnd_large//images.csv" 
