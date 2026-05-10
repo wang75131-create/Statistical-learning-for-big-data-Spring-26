@@ -1,0 +1,324 @@
+Loading data...
+
+Processing Theme 2: Flipping half of the images upside down...
+Using 19 parallel worker(s) for GridSearchCV.
+
+==================================================
+--- Running [Filter + Lasso] on Original Dataset ---
+Running GridSearchCV to find optimal combination of Filter 'k' and Lasso 'C' on Logistic Regression...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.9s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.9s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   8.1s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   8.6s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   8.7s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  11.5s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  12.1s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  13.1s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  13.2s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  13.9s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  19.4s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  22.6s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  26.6s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  36.2s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  36.8s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  29.0s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  37.6s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  26.3s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  38.6s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  41.6s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  35.4s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  49.3s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  39.9s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  38.8s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  46.0s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  54.4s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  42.4s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.0min
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  34.2s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.1min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.7min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.7min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.9min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.8min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.9min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.3min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.4min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.3min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.5min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.6min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 0.1
+CV Accuracy (on 75% train data): 0.7836
+FINAL TEST ACCURACY (on 25% unseen data): 0.7916
+Final number of features selected: 250
+==================================================
+Running GridSearchCV to find optimal combination of Filter 'k' and Lasso 'C' on LDA...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.3s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.4s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.5s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.6s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.8s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  10.9s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  11.9s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  12.7s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  13.0s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  13.3s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  19.3s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  23.3s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  35.5s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  28.7s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  38.1s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  38.3s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  38.5s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  32.4s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  29.4s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  42.7s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  38.9s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  53.2s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  44.5s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  43.9s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  57.7s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  51.7s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  46.5s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.1min
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  39.1s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.1min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.8min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 2.0min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.9min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 2.0min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 2.1min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.5min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.6min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.4min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.6min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.7min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 0.1
+CV Accuracy (on 75% train data): 0.7833
+FINAL TEST ACCURACY (on 25% unseen data): 0.7972
+Final number of features selected: 250
+==================================================
+Running GridSearchCV to find optimal combination of Filter 'k', Lasso 'C', and SVM params on SVM...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=   9.1s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=   9.3s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=   9.5s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  10.4s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  11.1s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  13.9s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  14.3s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  15.5s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  16.4s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  16.8s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  22.7s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  27.6s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  31.5s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  43.3s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  34.9s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  32.3s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  48.4s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  49.2s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  50.7s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  51.6s
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  45.2s
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.1min
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  53.4s
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  51.8s
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  53.1s
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.2min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.1min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.3min
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  45.3s
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.3min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.0min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.2min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.1min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.2min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.3min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.7min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.8min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.7min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.9min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.9min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 1
+Optimal SVM 'C': 10
+Optimal SVM kernel: rbf
+CV Accuracy (on 75% train data): 0.8891
+FINAL TEST ACCURACY (on 25% unseen data): 0.8972
+Final number of features selected: 807
+==================================================
+
+==================================================
+--- Running [Filter + Lasso] on Half-Flipped Dataset ---
+Running GridSearchCV to find optimal combination of Filter 'k' and Lasso 'C' on Logistic Regression...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   4.1s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   5.4s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   6.5s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   6.9s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.4s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   8.0s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   9.4s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   9.4s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   9.8s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  10.2s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  13.3s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  12.9s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  14.6s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  18.0s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  18.1s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  32.9s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  23.8s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  36.3s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  36.6s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  37.4s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  29.5s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  41.2s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  32.0s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  44.0s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  43.6s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  40.5s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  51.9s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  34.6s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  55.4s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.0min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.6min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.6min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 1.9min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.1min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.1min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 0.1
+CV Accuracy (on 75% train data): 0.6347
+FINAL TEST ACCURACY (on 25% unseen data): 0.6424
+Final number of features selected: 306
+==================================================
+Running GridSearchCV to find optimal combination of Filter 'k' and Lasso 'C' on LDA...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   3.9s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   5.0s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   6.3s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   6.6s
+[CV] END ............filter__k=500, lasso__estimator__C=0.01; total time=   7.0s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   8.4s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   8.5s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   9.5s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=   9.6s
+[CV] END .............filter__k=500, lasso__estimator__C=0.1; total time=  10.1s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  12.6s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  16.4s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  15.0s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  14.9s
+[CV] END ...........filter__k=1000, lasso__estimator__C=0.01; total time=  19.3s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  34.2s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  34.7s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  28.1s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  37.4s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  38.8s
+[CV] END ...............filter__k=500, lasso__estimator__C=1; total time=  40.4s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  31.2s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  47.7s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  38.5s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  48.4s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  44.6s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  55.7s
+[CV] END ............filter__k=1000, lasso__estimator__C=0.1; total time=  37.3s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time=  57.6s
+[CV] END ..............filter__k=500, lasso__estimator__C=10; total time= 1.1min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.6min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.6min
+[CV] END ..............filter__k=1000, lasso__estimator__C=1; total time= 1.5min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 1.8min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+[CV] END .............filter__k=1000, lasso__estimator__C=10; total time= 2.0min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 0.1
+CV Accuracy (on 75% train data): 0.6355
+FINAL TEST ACCURACY (on 25% unseen data): 0.6400
+Final number of features selected: 306
+==================================================
+Running GridSearchCV to find optimal combination of Filter 'k', Lasso 'C', and SVM params on SVM...
+Fitting 5 folds for each of 8 candidates, totalling 40 fits
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=   8.0s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=   8.6s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  10.1s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  10.6s
+[CV] END filter__k=500, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  11.3s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  15.8s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  16.3s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  17.1s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  17.1s
+[CV] END filter__k=500, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  17.5s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  18.4s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  19.6s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  23.4s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  19.8s
+[CV] END filter__k=1000, lasso__estimator__C=0.01, svm__C=10, svm__kernel=rbf; total time=  25.8s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time=  56.7s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 1.0min
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 1.1min
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  48.6s
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 1.1min
+[CV] END filter__k=500, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 1.1min
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  51.0s
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  56.5s
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time= 1.0min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.4min
+[CV] END filter__k=1000, lasso__estimator__C=0.1, svm__C=10, svm__kernel=rbf; total time=  54.2s
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.4min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.3min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.5min
+[CV] END filter__k=500, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 1.5min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.0min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.0min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.1min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 2.0min
+[CV] END filter__k=1000, lasso__estimator__C=1, svm__C=10, svm__kernel=rbf; total time= 1.9min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.2min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.5min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.5min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.5min
+[CV] END filter__k=1000, lasso__estimator__C=10, svm__C=10, svm__kernel=rbf; total time= 2.5min
+Optimal Filter 'k': 1000
+Optimal Lasso 'C': 0.1
+Optimal SVM 'C': 10
+Optimal SVM kernel: rbf
+CV Accuracy (on 75% train data): 0.8124
+FINAL TEST ACCURACY (on 25% unseen data): 0.8340
+Final number of features selected: 306
+==================================================
+
+==================================================
+Comparison: Original vs Flipped
+==================================================
+
+Classifier: logreg
+Pixels needed (Original): 250
+Pixels needed (Flipped):  306
+Overlapping selected pixels: 40
+
+Classifier: lda
+Pixels needed (Original): 250
+Pixels needed (Flipped):  306
+Overlapping selected pixels: 40
+
+Classifier: svm
+Pixels needed (Original): 807
+Pixels needed (Flipped):  306
+Overlapping selected pixels: 97
+Saved results to results\P2.02_grid_scores.csv
+Saved results to results\P2.02_selected_pixels.csv
+Saved results to results\P2.02_overlap_pixels.csv
