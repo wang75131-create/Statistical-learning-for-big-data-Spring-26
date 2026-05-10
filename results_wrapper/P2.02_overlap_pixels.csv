@@ -1,0 +1,14 @@
+classifier,pixel_index,row,col,n_original_selected,n_flipped_selected,n_overlap
+svm_wrapper,1178,18,26,150,150,13
+svm_wrapper,1179,18,27,150,150,13
+svm_wrapper,1184,18,32,150,150,13
+svm_wrapper,1240,19,24,150,150,13
+svm_wrapper,1243,19,27,150,150,13
+svm_wrapper,1244,19,28,150,150,13
+svm_wrapper,1253,19,37,150,150,13
+svm_wrapper,1255,19,39,150,150,13
+svm_wrapper,1317,20,37,150,150,13
+svm_wrapper,1433,22,25,150,150,13
+svm_wrapper,2277,35,37,150,150,13
+svm_wrapper,2852,44,36,150,150,13
+svm_wrapper,2853,44,37,150,150,13
